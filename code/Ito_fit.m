@@ -38,10 +38,5 @@ cap = K_data.CapFF;
 % cap = K_data.Cap;
 cap = nanmean(cap);
 
-X0 = [30.0, 30.0, 13.5, 33.5, 7.0];
-low_bd = [0.0, 0.0, 0.0, 20.0, 2.0];
-
-num_vars = 5;
-fit_fn = @(X) Ito_fitness(X, Ito_amp, tau_to);
-opts = optimoptions('ga', 'PlotFcn',@gaplotbestf, 'PopulationSize',40, 'MaxTime',18000);
-[param,fval] = ga(fit_fn,num_vars,[],[],[],[],low_bd,[],[],opts);
+y = [Ito_amp, tau_to];
+[best_fits, best_chroms] = custom_GA(5, y, 30, 6, 4);
