@@ -3,15 +3,145 @@ close all
 clear variables
 
 
-%% manipulate the average raw trace
-Ktrace = readtable('k_trace.csv');
-Ktrace_ko = Ktrace(:, [1,2]);
-Ktrace_wt = Ktrace(:, [1,3]);
+%% Figures for the meeting 2020-06-10
+[t, ~, A, ~] = RasmussonUnparam(holding_p,holding_t,P1,P1_t,P2,P2_t);
+IKsum_Ras = A(:,61) + A(:,62) + A(:,63) + A(:,64) + A(:,65) + A(:,66) + A(:,67);
 
-plot(Ktrace_ko.time, Ktrace_ko.KO, 'LineWidth',2)
+plot(t, IKsum_Ras, 'LineWidth',2, 'Color','black')
 hold on
-plot(Ktrace_wt.time, Ktrace_wt.WT, 'LineWidth',2)
+plot(ds_Ktrace_wt.time, ds_Ktrace_wt.WT./cap_wt, 'LineWidth',2, 'Color','blue')
 hold off
+ylabel('pA/pF')
+xlabel('Time(ms)')
+legend('Bondarenko','Experimental Data')
+
+IKsum_rdc = A(:,61) + A(:,65) + A(:,66);
+plot(t, IKsum_rdc, 'LineWidth',2, 'Color','black')
+hold on
+plot(t, A(:,61), '--', 'LineWidth',2, 'Color','black')
+plot(t, A(:,65), ':', 'LineWidth',2, 'Color','black')
+plot(t, A(:,66), '-.', 'LineWidth',2, 'Color','black')
+hold off
+ylabel('pA/pF')
+xlabel('Time(ms)')
+legend('IKsum','Ito','IKslow','Iss')
+
+[t, S, A, ~] = Rasmusson_AP(70);
+
+plot(t, S(:,1), 'LineWidth',2, 'Color','black')
+ylabel('mV')
+xlabel('Time(ms)')
+title('Action Potential')
+
+plot(t, A(:,61), '--', 'LineWidth',2, 'Color','black')
+hold on
+plot(t, A(:,65), ':', 'LineWidth',2, 'Color','black')
+plot(t, A(:,66), '-.', 'LineWidth',2, 'Color','black')
+hold off
+ylabel('pA/pF')
+xlabel('Time(ms)')
+legend('Ito','IKslow','Iss')
+
+holding_p = -80; %mV
+holding_t = 50; %ms
+P1 = -70:10:50; %mV
+P1_t = 5000; % ms
+P2 = -70; % mV
+P2_t = P1_t; % ms
+
+hold on
+for i=1:length(P1)
+    [t, ~, A, ~] = RasmussonUnparam(holding_p,holding_t,P1(i),P1_t,P2,P2_t);
+    plot(t, A(:,65))
+end
+hold off
+title('IKur')
+ylabel('pA/pF')
+xlabel('Time(ms)')
+
+holding_p = -70; %mV
+holding_t = 450; %ms
+P1 = 50; %mV
+P1_t = 25*1000; % ms
+Ek = -91.1;
+
+init_to_ko = [-13.5655  128.4098  321.7877  127.2189   58.4796];
+init_Kslow1_ko = [-0.0613    0.0097    0.2070    0.0128    1.1628];
+init_Kslow1_ko = init_Kslow1_ko*1000;
+init_Kslow2_ko = [-0.0717    0.0123    0.0245    0.0399    8.6985];
+init_Kslow2_ko = init_Kslow2_ko*1000;
+init_param_ko = [init_to_ko init_Kslow1_ko init_Kslow2_ko];
+
+init_to_wt = [0.661280350042337  -0.706849509040702   1.007979522932042   0.813067763455725   0.472446214481949];
+init_to_wt = init_to_wt*100;
+init_Kslow1_wt = [0.015413685966188   0.008810185337584   0.076048262113858   0.018025278517100   1.150596392908760];
+init_Kslow1_wt = init_Kslow1_wt*1000;
+init_Kslow2_wt = [-0.055151382655153   0.006381105415206  -0.025994281704011   0.018749874829633   4.424133917575417];
+init_Kslow2_wt = init_Kslow2_wt*1000;
+init_param_wt = [init_to_wt init_Kslow1_wt init_Kslow2_wt];
+
+[t1, ~, A1, ~] = IKsum(init_param_ko, holding_p, holding_t, P1, P1_t, Ek);
+IKsum_sim_ko = A1(:,5) + A1(:,10) + A1(:,15) + 3.1;
+[t2, ~, A2, ~] = IKsum(init_param_wt, holding_p, holding_t, P1, P1_t, Ek);
+IKsum_sim_wt = A2(:,5) + A2(:,10) + A2(:,15) + 3.15;
+
+plot(t2, IKsum_sim_wt, 'LineWidth',2, 'Color','blue')
+hold on
+plot(t1, IKsum_sim_ko, 'LineWidth',2, 'Color','red')
+hold off
+title('IKsum')
+ylabel('pA/pF')
+xlabel('Time(ms)')
+legend('WT','KO')
+
+plot(t2, A2(:,5), 'LineWidth',2, 'Color','blue')
+hold on
+plot(t1, A1(:,5), 'LineWidth',2, 'Color','red')
+hold off
+title('Ito')
+ylabel('pA/pF')
+xlabel('Time(ms)')
+legend('WT','KO')
+
+plot(t2, A2(:,10), 'LineWidth',2, 'Color','blue')
+hold on
+plot(t1, A1(:,10), 'LineWidth',2, 'Color','red')
+hold off
+title('IKslow1')
+ylabel('pA/pF')
+xlabel('Time(ms)')
+legend('WT','KO')
+
+plot(t2, A2(:,15), 'LineWidth',2, 'Color','blue')
+hold on
+plot(t1, A1(:,15), 'LineWidth',2, 'Color','red')
+hold off
+title('IKslow2')
+ylabel('pA/pF')
+xlabel('Time(ms)')
+legend('WT','KO')
+
+
+%% manipulate the average raw trace
+% Ktrace = readtable('k_trace.csv');
+% Ktrace_ko = Ktrace(:, [1,2]);
+% Ktrace_wt = Ktrace(:, [1,3]);
+% 
+% plot(Ktrace_ko.time, Ktrace_ko.KO, 'LineWidth',2)
+% hold on
+% plot(Ktrace_wt.time, Ktrace_wt.WT, 'LineWidth',2)
+% hold off
+
+cap_wt = 207.9;
+cap_ko = 254.3;
+plot(ds_Ktrace_wt.time, ds_Ktrace_wt.WT./cap_wt, 'LineWidth',2, 'Color','blue')
+hold on
+plot(ds_Ktrace_ko.time, ds_Ktrace_ko.KO./cap_ko, 'LineWidth',2, 'Color','Red')
+hold off
+title('Whole K+ Current Trace')
+ylabel('pA/pF')
+xlabel('Time(ms)')
+legend('WT','KO')
 
 
 %% downsample the raw trace
@@ -119,7 +249,7 @@ legend('KO', 'WT')
 %% investigated fitted parameters - GA IKslow1
 % import GA_IKslow1
 holding_p = -70; %mV
-holding_t = 45; %ms
+holding_t = 450; %ms
 P1 = 50; %mV
 P1_t = 25*1000; % ms
 P2 = -70; % mV
@@ -167,4 +297,75 @@ i_after_peak = A(peak_idx+1:end, 65);
 [tau_i_hat, tau_hat] = min(abs(tau_i - i_after_peak));
 
 
-%% IKsum
+%% sensitivity analysis
+holding_p = -70; %mV
+holding_t = 450; %ms
+P1 = 50; %mV
+P1_t = 25*1000; % ms
+Ek = -91.1;
+
+Xslow = [-0.0613    0.0097    0.2070    0.0128    1.1628];
+Xslow = Xslow*1000;
+Xto = [-13.5655  128.4098  321.7877  127.2189   58.4796];
+
+[t, S, A, ~] = KvUnparam(holding_p, holding_t, P1, P1_t, Ek);
+[t1, S1, A1, ~] = Ito(Xto, holding_p, holding_t, P1, P1_t, Ek);
+[t2, S2, A2, ~] = IKslow(Xslow, holding_p, holding_t, P1, P1_t, Ek);
+
+to_trc = A1(:,5);
+[to_peak, to_peak_idx] = max(to_trc);
+[~, to_tau_idx] = min(abs(to_peak*exp(-1) - to_trc(to_peak_idx:end)));
+ato = S1(:,1);
+ito = S1(:,2);
+ato(to_peak_idx)
+ito(to_peak_idx)
+
+slow_trc = A2(:,5);
+[slow_peak, slow_peak_idx] = max(slow_trc);
+[~, slow_tau_idx] = min(abs(slow_peak*exp(-1) - slow_trc(slow_peak_idx:end)));
+aur = S2(:,1);
+iur = S2(:,2);
+slow_peak
+t2(slow_tau_idx)
+aur(slow_peak_idx)
+iur(slow_peak_idx)
+
+% with original values
+to_trc = A(:,15);
+[to_peak, to_peak_idx] = max(to_trc);
+[~, to_tau_idx] = min(abs(to_peak*exp(-1) - to_trc(to_peak_idx:end)));
+ato = S1(:,1);
+ito = S1(:,2);
+ato(to_peak_idx)
+ito(to_peak_idx)
+
+slow_trc = A(:,17);
+[slow_peak, slow_peak_idx] = max(slow_trc);
+[~, slow_tau_idx] = min(abs(slow_peak*exp(-1) - slow_trc(slow_peak_idx:end)));
+aur = S2(:,1);
+iur = S2(:,2);
+aur(slow_peak_idx)
+iur(slow_peak_idx)
+
+
+%% darw traces by changing voltage steps
+holding_p = -70; %mV
+holding_t = 50; %ms
+P1 = -70:10:50; %mV
+P1_t = 5*1000; % ms
+Ek = -91.1;
+
+init_to = [-13.5655  128.4098  321.7877  127.2189   58.4796];
+init_Kslow1 = [-0.0613    0.0097    0.2070    0.0128    1.1628];
+init_Kslow1 = init_Kslow1*1000;
+init_Kslow2 = [-0.0717    0.0123    0.0245    0.0399    8.6985];
+init_Kslow2 = init_Kslow2*1000;
+init_param = [init_to init_Kslow1 init_Kslow2];
+
+hold on
+for i=1:length(P1)
+    [t, ~, A, ~] = IKsum(init_param, holding_p, holding_t, P1(i), P1_t, Ek);
+    IKsum_sim = A(:,5) + A(:,10) + A(:,15);
+    plot(t, IKsum_sim)
+end
+hold off

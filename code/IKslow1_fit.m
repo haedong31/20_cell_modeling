@@ -1,47 +1,29 @@
 clc
 close all
 clear variables
+format long
 
 
-K_data = readtable('./potassium-KO.xlsx');
-% K_data = readtable('./MGAT1_Data_tidy/JMCC/K Currents 14 Weeks/potassium-WT.xlsx');
+holding_p = -70; %mV
+holding_t = 450; %ms
+P1 = 50; %mV
+P1_t = 25*1000; % ms
+Ek = -91.1;
 
-Iss_amp = K_data.IssFF;
-% Iss_amp = K_data.Iss;
-Iss_amp = nanmean(Iss_amp);
+% X0 = [22.5, 7.7, 45.2, 5.7, 1200.0, 0.16];
+% [t, ~, A] = IKslow(X0, holding_p, holding_t, P1, P1_t, Ek);
+% plot(t, A(:,5))
 
-Ito_amp = K_data.A3FF;
-% Ito_amp = K_data.A3;
-Ito_amp = nanmean(Ito_amp);
+y = [3.1, 1115.1];
+[best_amps, best_taus, best_gens, best_chroms] = IKslow1_AGA(6, y, 30, 6, 4);
 
-tau_to = K_data.Tau3FF;
-% tau_to = K_data.Tau3;
-tau_to = nanmean(tau_to);
+[t1, ~, A1] = IKslow(param_ko(1,:), holding_p, holding_t, P1, P1_t, Ek);
+IKslow1 = A1(:,5);
+[t2, ~, A2] = IKslow(param_ko(2,:), holding_p, holding_t, P1, P1_t, Ek);
+IKslow2 = A2(:,5);
 
-IKslow1_amp = K_data.A2FF;
-% IKslow1_amp = K_data.A2;
-IKslow1_amp = nanmean(IKslow1_amp);
-
-tau1 = K_data.Tau2FF;
-% tau1 = K_data.Tau2;
-tau1 = nanmean(tau1);
-
-IKslow2_amp = K_data.A1FF;
-% IKslow2_amp = K_data.A1;
-IKslow2_amp = nanmean(IKslow2_amp);
-
-tau2 = K_data.Tau1FF;
-% tau2 = K_data.Tau1;
-tau2 = nanmean(tau2);
-
-cap = K_data.CapFF;
-% cap = K_data.Cap;
-cap = nanmean(cap);
-
-X0 = [7.7, 45.2, 5.7, 1200.0, 45.2];
-low_bd = [2.0, 10.0, 2.0, 200.0, 0.0];
-
-num_vars = 5;
-fit_fn = @(X) IKslow1_fitness(X, IKslow1, tau1);
-opts = optimoptions('ga', 'PlotFcn',@gaplotbestf, 'PopulationSize',40, 'MaxTime',18000);
-[param,fval] = ga(fit_fn,num_vars,[],[],[],[],low_bd,[],[],opts);
+plot(t1, IKslow1)
+hold on
+plot(t2, IKslow2)
+hold off
+legend('IKslow1','IKslow2')

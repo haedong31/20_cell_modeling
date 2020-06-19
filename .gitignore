@@ -1,4 +1,5 @@
 # folders
+/writing/
 /JMCC_fig4/
 /literature/
 /MCMC_demo/
@@ -11,6 +12,7 @@
 /R codes MCMC/
 /code/results/
 /code/archive/
+/sub_code/
 
 # files
 *.pptx

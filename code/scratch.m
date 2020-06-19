@@ -286,3 +286,14 @@ syms x;
 eqn = x - 170.000./(1.00000+exp((-70+45.2000)./5.70000)) > 0;
 sol = solve(eqn, x);
 170 - 170.000./(1.00000+exp((50+45.2000)./5.70000))
+
+
+X = [0.0111   -0.0152    0.0406    4.8648    0.0929];
+X = X*1000;
+[t, ~, A, ~] = IKslow(X, -70, 450, 50, 25*1000, -80.3);
+trc = A(:,5);
+plot(t, trc)
+[peak, peak_idx] = max(trc);
+peak
+[~, tau_idx] = min(abs(peak*exp(-1) - trc(peak_idx:end)));
+t(tau_idx)

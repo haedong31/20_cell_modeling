@@ -3,40 +3,14 @@ close all
 clear variables
 
 
-K_data = readtable('./potassium-KO.xlsx');
-% K_data = readtable('./MGAT1_Data_tidy/JMCC/K Currents 14 Weeks/potassium-WT.xlsx');
+% holding_p = -70; %mV
+% holding_t = 450; %ms
+% P1 = 50; %mV
+% P1_t = 25*1000; % ms
+% Ek = -91.1;
+% X0 = [30.0, 30.0, 13.5, 33.5, 7.0, 0.4067];
+% [t, ~, A] = Ito(X0, holding_p, holding_t, P1, P1_t, Ek);
+% plot(t, A(:,5))
 
-Iss_amp = K_data.IssFF;
-% Iss_amp = K_data.Iss;
-Iss_amp = nanmean(Iss_amp);
-
-Ito_amp = K_data.A3FF;
-% Ito_amp = K_data.A3;
-Ito_amp = nanmean(Ito_amp);
-
-tau_to = K_data.Tau3FF;
-% tau_to = K_data.Tau3;
-tau_to = nanmean(tau_to);
-
-IKslow1_amp = K_data.A2FF;
-% IKslow1_amp = K_data.A2;
-IKslow1_amp = nanmean(IKslow1_amp);
-
-tau1 = K_data.Tau2FF;
-% tau1 = K_data.Tau2;
-tau1 = nanmean(tau1);
-
-IKslow2_amp = K_data.A1FF;
-% IKslow2_amp = K_data.A1;
-IKslow2_amp = nanmean(IKslow2_amp);
-
-tau2 = K_data.Tau1FF;
-% tau2 = K_data.Tau1;
-tau2 = nanmean(tau2);
-
-cap = K_data.CapFF;
-% cap = K_data.Cap;
-cap = nanmean(cap);
-
-y = [Ito_amp, tau_to];
-[best_fits, best_chroms] = custom_GA(5, y, 30, 6, 4);
+y = [17.6, 111.2];
+[best_amps, best_taus, best_gens, best_chroms] = Ito_AGA(6, y, 30, 6, 4);
