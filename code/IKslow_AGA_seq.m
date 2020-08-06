@@ -1,17 +1,19 @@
-function [best_amps, best_taus, best_gens, best_chroms] = IKslow1_AGA(nv, y, N0, N1, N2)
+function [best_amps, best_taus, best_gens, best_chroms] = IKslow_AGA_seq(nv, y, init_param, N0, N1, N2)
     global num_var;
     num_var = nv;
-    
+
     best_fits = [];
     best_amps = [];
     best_taus = [];
     best_gens = [];
     best_chroms = [];
 
-    % X0 = [22.5, 7.7, 45.2, 5.7, 2.058, 1200.0, 45.2, 5.7, 0.16]
-    low = [2.0, -60.0, 2.0, 200.0, 0.05];
-    high = [30.0, 80.0, 30.0, 5000.0, 0.3];
-    init_gen = init_pop(low, high, N0);
+    % initial population
+    init_gen = zeros(N0, num_var);
+    init_gen(1,:) = init_param;
+    for i=1:num_var
+        init_gen(2:end,i) = init_param(i) + normrnd(0,1,[N0-1,1]);
+    end
 
     cnt = 1;
     [fits, amp_dels, tau_dels] = eval_fn(init_gen, y, N0);
@@ -19,7 +21,7 @@ function [best_amps, best_taus, best_gens, best_chroms] = IKslow1_AGA(nv, y, N0,
     bamp = amp_dels(bf_idx);
     btau = tau_dels(bf_idx);
     bchrom = init_gen(bf_idx,:);
-    
+
     fprintf('Initial best fit: %f|Amp: %f|Tau: %f \n', bf, bamp, btau);
     disp(bchrom)
 
@@ -73,16 +75,6 @@ function [best_amps, best_taus, best_gens, best_chroms] = IKslow1_AGA(nv, y, N0,
     end
 end
 
-function init_gen = init_pop(low, high, N0)
-    global num_var;
-
-    init_gen = zeros(N0, num_var);
-    for j=1:num_var
-        unif = makedist('Uniform', 'lower',low(j), 'upper',high(j));
-        init_gen(:,j) = random(unif, N0, 1);
-    end
-end
-
 function new_gen = evolve(chrom, fits, N0, N1, N2)
     global num_var;
 
@@ -98,8 +90,8 @@ function new_gen = evolve(chrom, fits, N0, N1, N2)
         elite = elites(i,:);
         for j=1:N2
             offspring = elite + normrnd(0,sigs);
-            offspring(1) = abs(offspring(1));
-            offspring(3) = abs(offspring(3));
+            offspring(2) = abs(offspring(2));
+            offspring(4) = abs(offspring(4));
             new_gen((N1+cnt),:) = offspring;
             cnt = cnt + 1;
         end
@@ -119,7 +111,7 @@ function [fits, amp_dels, tau_dels] = eval_fn(chrom, y, N0)
     wrn_idx = [];
     for i=1:N0
         try
-            [t, ~, A] = IKslow(chrom(i,:), holding_p, holding_t, P1, P1_t, Ek);
+            [t, ~, A] = Ito(chrom(i,:), holding_p, holding_t, P1, P1_t, Ek);
             trc = A(:,5);
             
             wrong_shape_iden = any(trc < 0);
@@ -145,7 +137,7 @@ function [fits, amp_dels, tau_dels] = eval_fn(chrom, y, N0)
             % lasterr
             % fprintf('Error or warning at %i \n', i);
             % disp(chrom(i,:));
-            
+
             wrn_idx = [wrn_idx, i];
             amp_dels(i) = 15000;
             tau_dels(i) = 15000;

@@ -1,0 +1,205 @@
+\documentclass[journal]{IEEEtran}
+
+%\usepackage[retainorgcmds]{IEEEtrantools}
+%\usepackage{bibentry}  
+\usepackage{xcolor,soul,framed} %caption
+
+\colorlet{shadecolor}{yellow}
+% \usepackage{color,soul}
+\usepackage[pdftex]{graphicx}
+\graphicspath{{../pdf/}{../jpeg/}}
+\DeclareGraphicsExtensions{.pdf,.jpeg,.png}
+
+\usepackage[cmex10]{amsmath}
+\usepackage{array}
+\usepackage{mdwmath}
+\usepackage{mdwtab}
+\usepackage{eqparbox}
+\usepackage{url}
+
+\hyphenation{op-tical net-works semi-conduc-tor}
+
+%\bstctlcite{IEEE:BSTcontrol}
+
+
+% === TITLE & AUTHORS =============================================================
+% =================================================================================
+\begin{document}
+\bstctlcite{IEEEexample:BSTcontrol}
+    \title{Physical-statistical Decomposition of Potassium Channel Kinetics in Wild Type and Complex N-glycosylation Myocyte}
+  \author{Haedong Kim,~\IEEEmembership{\hl{Student Member},~IEEE,}
+      Hui Yang,~\IEEEmembership{Member,~IEEE,}
+      Andrew R. Ednie,
+      and~Eric S. Bennett
+  \thanks{\hl{Manuscript received Month Day, Year} This work was supported by the National Science Foundation under Grant \hl{XXXX-1111.}}
+  \thanks{H. Kim and H. Yang are with the Harold and Inge Marcus Department of Industrial and Manufacturing Engineering, The Pennsylvania State University, University Park, PA 16802 USA (e-mail: huk344@psu.edu; huy25@psu.edu).}% <-this % stops a space
+  \thanks{A. R. Ednie and E. S. Bennett are with the Department of Neuroscience, Cell Biology and Physiology, Wright State Univer- sity, Dayton, OH 45435 USA (e-mail: andrew.ednie@wright.edu; eric. bennett@wright.edu).}}
+
+% The paper headers
+% The only time the second header will appear is for the odd numbered pages after the title page when using the two-side option.
+\markboth{IEEE JOURNAL OF BIOMEDICAL AND HEALTH INFORMATICS}%
+{Kim \MakeLowercase{\textit{et al.}}: Potassium Channel}
+
+
+% =================================================================================
+\maketitle
+
+
+% === ABSTRACT ====================================================================
+% =================================================================================
+\begin{abstract}
+Cardiovascular diseases are severe health care problem, which is the number one cause of death worldwide. Especially, dilated cardiomyopathy is the third most common cause of heart diseases that leads to early deaths. In the recent work of us, we conducted the in-vitro experiment to show that reduced hybrid/complex N-glycosylation in cardiomyocytes was sufficient to lead to dilated cardiomyopathy. To understand the role of glycosylation changes, we focused on the activity and gating of voltage-gated sodium (Na+) and potassium (K+) channels, which are also called $Na_v$ and $K_v$ respectively. Although we observed aberrant electrical signalings such as prolonged action potentials (APs) and abnormal early re-activation, it is hard to understand detailed mechanism of the ion channels. In addition, $K_v$ consists of several components, e.g., $K_v 1.5$, $K_v 2.1$, and $K_v 4.2$, but it is hard to measure the currents in each component channel. In the in-vitro experiment, usually the sum of K+ currents ($I_{Ksum}$) is measured and decomposed into component currents using standard exponential function. However, exponential function does not describe dynamics of K+ component currents well. Through simulation models, it is possible to understand the mechanism of ion channels better and simulate component currents. Besides, simulation modeling is way much cheaper than real experiments and free from ethical issues. However, fitting simulation models to data usually requires intensive complexity. Simulation models are based on differential equations, to which ordinary linear/convex optimization methods do not work and have high-dimensional parameter space. Therefore, in this research, we propose simulation models for potassium-channel currents and a genetic algorithm-based heuristic optimization method to fit the models to our in-vitro data.  
+\end{abstract}
+
+
+% === KEYWORDS ====================================================================
+% =================================================================================
+\begin{IEEEkeywords}
+Electrophysiology, cardiac action potential, dilated cardiomyopathy, potassium channel, simulation modeling, genetic algorithm. 
+\end{IEEEkeywords}
+
+% For peer review papers, you can put extra information on the cover
+% page as needed:
+% \ifCLASSOPTIONpeerreview
+% \begin{center} \bfseries EDICS Category: 3-BBND \end{center}
+% \fi
+%
+% For peerreview papers, this IEEEtran command inserts a page break and
+% creates the second title. It will be ignored for other modes.
+\IEEEpeerreviewmaketitle
+
+
+% === I. INTRODUCTION =============================================================
+% =================================================================================
+\section{INTRODUCTION}
+
+\IEEEPARstart{T}{his} paper \cite{ednie2019reduced}
+
+
+% === II. RESEARCH BACKGROUND =====================================================
+% =================================================================================
+\section{RESEARCH BACKGROUND}
+explain existing approaches and gaps
+
+
+% === III. IN-VITRO DATA ==========================================================
+% =================================================================================
+\section{IN-VITRO DATA}
+describe our in-vitro (experimental) data
+
+
+% === IV. RESEARCH METHODOLOGY ====================================================
+% =================================================================================
+\section{RESEARCH METHODOLOGY}
+simulation models, heuristic optimization process for continuous variables
+
+
+% === EXPERIMENTAL RESULTS ========================================================
+% =================================================================================
+\section{EXPERIMENTAL RESULTS}
+Show and interpret experimental results
+
+
+% === CONCLUSION ==================================================================
+% =================================================================================
+\section{CONCLUSION}
+Conclusion
+
+
+\section*{Acknowledgment}
+The authors would like to thank ~~. 
+
+
+% if have a single appendix:
+%\appendix[Proof of the Zonklar Equations]
+% or
+%\appendix  % for no appendix heading
+% do not use \section anymore after \appendix, only \section*
+% is possibly needed
+
+% use appendices with more than one appendix
+% then use \section to start each appendix
+% you must declare a \section before using any
+% \subsection or using \label (\appendices by itself
+% starts a section numbered zero.)
+%
+
+% ============================================
+%\appendices
+%\section{Proof of the First Zonklar Equation}
+%Appendix one text goes here %\cite{Roberg2010}.
+
+% you can choose not to have a title for an appendix
+% if you want by leaving the argument blank
+%\section{}
+%Appendix two text goes here.
+
+
+% use section* for acknowledgement
+%\section*{Acknowledgment}
+
+
+% Can use something like this to put references on a page
+% by themselves when using endfloat and the captionsoff option.
+\ifCLASSOPTIONcaptionsoff
+  \newpage
+\fi
+
+
+% trigger a \newpage just before the given reference
+% number - used to balance the columns on the last page
+% adjust value as needed - may need to be readjusted if
+% the document is modified later
+%\IEEEtriggeratref{8}
+% The "triggered" command can be changed if desired:
+%\IEEEtriggercmd{\enlargethispage{-5in}}
+
+% ====== REFERENCE SECTION
+
+%\begin{thebibliography}{1}
+
+% IEEEabrv,
+
+\bibliographystyle{IEEEtran}
+\bibliography{IEEEabrv,Bibliography}
+%\end{thebibliography}
+% biography section
+% 
+%% insert where needed to balance the two columns on the last page with
+%% biographies
+%%\newpage
+% If you have an EPS/PDF photo (graphicx package needed) extra braces are
+% needed around the contents of the optional argument to biography to prevent
+% the LaTeX parser from getting confused when it sees the complicated
+% \includegraphics command within an optional argument. (You could create
+% your own custom macro containing the \includegraphics command to make things
+% simpler here.)
+%\begin{biography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{mshell}}]{Michael Shell}
+% or if you just want to reserve a space for a photo:
+
+% ==== SWITCH OFF the BIO for submission
+% \begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{photo/haedong_low.jpg}}]{Haedong Kim}
+% Turn off for submission
+% \end{IEEEbiography}
+% \begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{photo/haedong_low.jpg}}]{Hui Yang}
+% Turn off for submission
+% \end{IEEEbiography}
+% \begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{photo/haedong_low.jpg}}]{Andrew R. Ednie}
+% Turn off for submission
+% \end{IEEEbiography}
+% \begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{photo/haedong_low.jpg}}]{Eric S. Bennett}
+% Turn off for submission
+% \end{IEEEbiography}
+
+% You can push biographies down or up by placing
+% a \vfill before or after them. The appropriate
+% use of \vfill depends on what kind of text is
+% on the last page and whether or not the columns
+% are being equalized.
+
+\vfill
+
+% Can be used to pull up biographies so that the bottom of the last one
+% is flush with the other column.
+%\enlargethispage{-5in}
+\end{document}

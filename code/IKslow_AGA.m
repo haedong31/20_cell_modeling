@@ -1,4 +1,4 @@
-function [best_amps, best_taus, best_gens, best_chroms] = IKslow2_AGA(nv, y, N0, N1, N2)
+function [best_amps, best_taus, best_gens, best_chroms] = IKslow_AGA(nv, y, N0, N1, N2)
     global num_var;
     num_var = nv;
     
@@ -8,9 +8,9 @@ function [best_amps, best_taus, best_gens, best_chroms] = IKslow2_AGA(nv, y, N0,
     best_gens = [];
     best_chroms = [];
 
-    % X0 = [22.5, 7.7, 45.2, 5.7, 2.058, 1200.0, 45.2, 5.7]
-    low = [-60.0, 2.0, -20.0, 2.0, 200.0, 0.05];
-    high = [80.0, 14.0, 80.0, 24.0, 5000.0, 0.3];
+    % X0 = [22.5, 7.7, 45.2, 5.7, 2.058, 1200.0, 45.2, 5.7, 0.16]
+    low = [-60.0, 2.0, -30.0, 2.0, 200.0, 0.05];
+    high = [80.0, 30.0, 80.0, 24.0, 5000.0, 0.3];    
     init_gen = init_pop(low, high, N0);
     
     best_fits = [];
@@ -45,7 +45,7 @@ function [best_amps, best_taus, best_gens, best_chroms] = IKslow2_AGA(nv, y, N0,
         bchrom = new_gen(bf_idx,:);
         
         % stopping tolerance
-        if (bamp <= 0.5) && (btau <= 0.5)
+        if (bamp <= 0.1) && (btau <= 0.1)
             fprintf('Termination: %f|Amp: %f|Tau: %f \n', bf, bamp, btau);
             disp(bchrom)
 
@@ -127,8 +127,8 @@ function [fits, amp_dels, tau_dels] = eval_fn(chrom, y, N0)
             wrong_shape_iden = any(trc < 0);
             [peak, peak_idx] = max(trc);
             if (wrong_shape_iden == 1) || (t(peak_idx) < holding_t)
-                fprintf('Wrong shape at %i \n', i);
-                disp(chrom(i,:));
+                % fprintf('Wrong shape at %i \n', i);
+                % disp(chrom(i,:));
                     
                 wrn_idx = [wrn_idx, i];
                 amp_dels(i) = 15000;
@@ -145,8 +145,8 @@ function [fits, amp_dels, tau_dels] = eval_fn(chrom, y, N0)
         catch
             % lastwarn
             % lasterr
-            fprintf('Error or warning at %i \n', i);
-            disp(chrom(i,:));
+            % fprintf('Error or warning at %i \n', i);
+            % disp(chrom(i,:));
 
             wrn_idx = [wrn_idx, i];
             amp_dels(i) = 15000;
