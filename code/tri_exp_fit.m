@@ -40,7 +40,22 @@ Ito = exp_fn(t, param(4), param(7));
 
 IKsum = Iss + IKslow2 + IKslow1 + Ito;
 
-plot(t, ds_trc.current, 'Color','red')
+figure(1)
+plot(t, ds_trc.current, 'LineWidth',2, 'Color','red')
 hold on
-plot(t, IKsum, 'Color','blue')
+plot(t, IKsum, '--', 'LineWidth',2, 'Color','black')
 hold off
+legend('Read Data', 'Fitted Model')
+axis tight
+
+figure(2)
+x = ones(length(t), 1)*Iss;
+plot(t, ds_trc.current, 'LineWidth',2, 'Color','red')
+hold on
+plot(t, Ito, '--', 'LineWidth',2, 'Color','black')
+plot(t, IKslow1, ':', 'LineWidth',2, 'Color','black')
+plot(t, IKslow2, '-.', 'LineWidth',2, 'Color','black')
+plot(t, x, 'LineWidth',2, 'Color','black')
+hold off
+legend('Real Data', 'Ito', 'IKslow1', 'IKslow2', 'Iss')
+axis tight

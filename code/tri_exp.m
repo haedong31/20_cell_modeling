@@ -44,10 +44,10 @@ function [best_fits, best_gens, best_chroms] = tri_exp(nv, trc, n0, n1, n2)
         cnt = cnt + 1;
         fits = eval(new_gen, trc);
         [bf, bf_idx] = min(fits);
-        bchrom = init_gen(bf_idx,:);
+        bchrom = new_gen(bf_idx,:);
         
         % stopping
-        if (bf <= 1) || (cnt == 10000)
+        if (bf <= 1) || (cnt == 20000)
             fprintf('Termination: %f \n', bf);
             disp(bchrom)
             

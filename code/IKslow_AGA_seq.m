@@ -45,7 +45,7 @@ function [best_amps, best_taus, best_gens, best_chroms] = IKslow_AGA_seq(nv, y, 
         bchrom = new_gen(bf_idx,:);
         
         % stopping tolerance
-        if (bamp <= 0.1) && (btau <= 0.1)
+        if (bamp <= 0.5) && (btau <= 0.5)
             fprintf('Termination: %f|Amp: %f|Tau: %f \n', bf, bamp, btau);
             disp(bchrom)
 

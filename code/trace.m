@@ -16,15 +16,16 @@ xlabel('Time(ms)')
 legend('Bondarenko','Experimental Data')
 
 IKsum_rdc = A(:,61) + A(:,65) + A(:,66);
-plot(t, IKsum_rdc, 'LineWidth',2, 'Color','black')
+plot(t, IKsum_rdc, 'LineWidth',2, 'Color','red')
 hold on
-plot(t, A(:,61), '--', 'LineWidth',2, 'Color','black')
+plot(t, A(:,61), 'LineWidth',2, 'Color','black')
 plot(t, A(:,65), ':', 'LineWidth',2, 'Color','black')
 plot(t, A(:,66), '-.', 'LineWidth',2, 'Color','black')
 hold off
-ylabel('pA/pF')
-xlabel('Time(ms)')
-legend('IKsum','Ito','IKslow','Iss')
+ylabel('pA/pF', 'FontWeight','bold')
+xlabel('Time(ms)', 'FontWeight','bold')
+legend('IKsum','Ito','IKslow','Iss', 'FontWeight','bold')
+axis tight 
 
 [t, S, A, ~] = Rasmusson_AP(70);
 
