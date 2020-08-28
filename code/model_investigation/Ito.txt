@@ -1,0 +1,38 @@
+Default
+alpha_a = 3.1593
+beta_a = 0.0026934
+alpha_i = 1.7465e-08
+beta_i = 0.018504
+54.866
+106.33
+0.99722
+0.96413
+
+Case 1.1. Decrease alpha_a (Decrease ato_ss)
+alpha_a = 0.3159
+41.956
+119.34
+0.97219
+0.79568
+As alpha_a becomes smaller, ato hits its steady-state value slowly.
+
+Case 1.2. Decrease alpha_a (Decrease ato_ss)
+alpha_a = 0.0316
+9.9053
+183.99
+0.78163
+0.36146
+
+Case 2. Increase beta_i (Decrease tau_i so that ito decrease faster)
+beta_i = 1.8504
+11.637
+51.407
+0.84293
+0.33858
+
+Case 3. Decrease beta_i (Increase tau_i)
+beta_i = 0.00018504
+57.199
+5000
+0.99913
+0.99936
