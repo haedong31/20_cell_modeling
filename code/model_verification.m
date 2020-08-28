@@ -64,6 +64,8 @@ plot(t, Ito_exp, '--', 'LineWidth',2, 'Color','black')
 hold off
 axis tight
 legend('Simulation Model','Exponential Function')
+ylabel('Current (pA/pF)')
+xlabel('Time (ms)')
 
 figure(4)
 plot(t2, IKslow1, 'LineWidth',2, 'Color','red')
@@ -72,6 +74,8 @@ plot(t, IKslow1_exp, '--', 'LineWidth',2, 'Color','black')
 hold off
 axis tight
 legend('Simulation Model','Exponential Function')
+ylabel('Current (pA/pF)')
+xlabel('Time (ms)')
 
 figure(5)
 plot(t3, IKslow2, 'LineWidth',2, 'Color','red')
@@ -80,6 +84,11 @@ plot(t, IKslow2_exp, '--', 'LineWidth',2, 'Color','black')
 hold off
 axis tight
 legend('Simulation Model','Exponential Function')
+ylabel('Current (pA/pF)')
+xlabel('Time (ms)')
+
+
+%% prediction
 
 
 %% WT - expoenetial fn vs. my model

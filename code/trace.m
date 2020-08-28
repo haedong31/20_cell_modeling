@@ -4,7 +4,14 @@ clear variables
 
 
 %% Figures for the meeting 2020-06-10
-[t, ~, A, ~] = RasmussonUnparam(holding_p,holding_t,P1,P1_t,P2,P2_t);
+holding_p = -80; %mV
+holding_t = 50; %ms
+P1 = -70:10:50; %mV
+P1_t = 5000; % ms
+P2 = -70; % mV
+P2_t = P1_t; % ms
+
+[t, ~, A, ~] = RasmussonUnparam(holding_p,holding_t,50,P1_t,P2,P2_t);
 IKsum_Ras = A(:,61) + A(:,62) + A(:,63) + A(:,64) + A(:,65) + A(:,66) + A(:,67);
 
 plot(t, IKsum_Ras, 'LineWidth',2, 'Color','black')
@@ -22,33 +29,28 @@ plot(t, A(:,61), 'LineWidth',2, 'Color','black')
 plot(t, A(:,65), ':', 'LineWidth',2, 'Color','black')
 plot(t, A(:,66), '-.', 'LineWidth',2, 'Color','black')
 hold off
-ylabel('pA/pF', 'FontWeight','bold')
-xlabel('Time(ms)', 'FontWeight','bold')
-legend('IKsum','Ito','IKslow','Iss', 'FontWeight','bold')
+ylabel('Current (pA/pF)')
+xlabel('Time (ms)')
+legend('I_{Ksum}','I_{to}','I_{Kslow}','I_{SS}')
 axis tight 
 
 [t, S, A, ~] = Rasmusson_AP(70);
 
 plot(t, S(:,1), 'LineWidth',2, 'Color','black')
-ylabel('mV')
-xlabel('Time(ms)')
-title('Action Potential')
+ylabel('Voltage (mV)')
+xlabel('Time (ms)')
 
-plot(t, A(:,61), '--', 'LineWidth',2, 'Color','black')
+plot(t(30:600), A(30:600,61), '--', 'LineWidth',2, 'Color',[0.4940, 0.1840, 0.5560])
 hold on
-plot(t, A(:,65), ':', 'LineWidth',2, 'Color','black')
-plot(t, A(:,66), '-.', 'LineWidth',2, 'Color','black')
+plot(t(30:600), A(30:600,65), ':', 'LineWidth',2, 'Color',[0.4940, 0.1840, 0.5560])
+plot(t(30:600), A(30:600,66), '-.', 'LineWidth',2, 'Color',[0.4940, 0.1840, 0.5560])
+plot(t(30:600), A(30:600,58), 'LineWidth',2, 'Color',[0.9290, 0.6940, 0.1250])
+plot(t(30:600), A(30:600,47), 'LineWidth',2, 'Color',[0.8500, 0.3250, 0.0980])
 hold off
-ylabel('pA/pF')
-xlabel('Time(ms)')
-legend('Ito','IKslow','Iss')
-
-holding_p = -80; %mV
-holding_t = 50; %ms
-P1 = -70:10:50; %mV
-P1_t = 5000; % ms
-P2 = -70; % mV
-P2_t = P1_t; % ms
+axis tight
+ylabel('Current (pA/pF)')
+xlabel('Time (ms)')
+legend('I_{to}','I_{Kslow}','I_{SS}', 'I_{Na}', 'I_{CaL}')
 
 hold on
 for i=1:length(P1)
@@ -81,9 +83,29 @@ init_Kslow2_wt = [-0.055151382655153   0.006381105415206  -0.025994281704011   0
 init_Kslow2_wt = init_Kslow2_wt*1000;
 init_param_wt = [init_to_wt init_Kslow1_wt init_Kslow2_wt];
 
-[t1, ~, A1, ~] = IKsum(init_param_ko, holding_p, holding_t, P1, P1_t, Ek);
-IKsum_sim_ko = A1(:,5) + A1(:,10) + A1(:,15) + 3.1;
-[t2, ~, A2, ~] = IKsum(init_param_wt, holding_p, holding_t, P1, P1_t, Ek);
+[t1, ~, A1] = IKsum2(init_param_ko, holding_p, holding_t, P1, P1_t, Ek);
+% [t1, ~, A1] = IKsum2(init_param_wt, holding_p, holding_t, P1, P1_t, Ek);
+IKsum_rdc = A1(:,5) + A1(:,10) + A1(:,15);
+[~, peak_idx] = max(IKsum_rdc);
+
+Iss = zeros(length(t1), 1);
+Iss(peak_idx:end) = 3.1;
+% Iss(peak_idx:end) = 3.15;
+IKsum = IKsum_rdc + Iss;
+
+plot(t1, IKsum, 'LineWidth',2, 'Color','red')
+hold on
+plot(t1, A1(:,5), 'LineWidth',2, 'Color','black')
+plot(t1, A1(:,10), ':', 'LineWidth',2, 'Color','blue')
+plot(t1, A1(:,15), '--', 'LineWidth',2, 'Color','blue')
+plot(t1, Iss, '-.', 'LineWidth',2, 'Color','black')
+hold off
+axis tight
+legend('I_{Ksum}', 'I_{to}', 'I_{Kslow1}', 'I_{Kslow2}', 'I_{SS}')
+xlabel('Time (ms)')
+ylabel('Current (pA/pF)')
+
+[t2, ~, A2] = IKsum2(init_param_wt, holding_p, holding_t, P1, P1_t, Ek);
 IKsum_sim_wt = A2(:,5) + A2(:,10) + A2(:,15) + 3.15;
 
 plot(t2, IKsum_sim_wt, 'LineWidth',2, 'Color','blue')
