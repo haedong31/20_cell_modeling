@@ -1,10 +1,10 @@
-function [best_amps, best_taus, best_gens, best_chroms] = IKslow_AGA(nv, y, n0, n1, n2)
+function [best_amps, best_taus, best_gens, best_chroms] = IKslow_SBGA(y, tol, n0, n1, n2)
     global num_var;
     global N0;
     global N1;
     global N2;
     global sig_ctl;
-    num_var = nv;
+    num_var = 6;
     N0 = n0;
     N1 = n1;
     N2 = n2;
@@ -15,12 +15,8 @@ function [best_amps, best_taus, best_gens, best_chroms] = IKslow_AGA(nv, y, n0, 
     best_gens = [];
     best_chroms = [];
 
-    amp_tol = 0.5;
-    tau_tol = 0.5;
-    min_tol = amp_tol + tau_tol;
-
     % X0 = [22.5, 7.7, 45.2, 5.7, 2.058, 1200.0, 45.2, 5.7, 0.16]
-    low = [-50.0, 2.0, -20.0, 2.0, 35000.0, 0.05];
+    low = [-50.0, 2.0, -20.0, 2.0, 1000.0, 0.05];  % 35000
     high = [70.0, 14.0, 80.0, 24.0, 500000.0, 0.3];
     init_gen = init_pop(low, high);
     
@@ -41,7 +37,6 @@ function [best_amps, best_taus, best_gens, best_chroms] = IKslow_AGA(nv, y, n0, 
     best_gens = [best_gens, 1];
     best_chroms = [best_chroms; bchrom];
     
-    max_tol = bf;
     new_gen = evolve(init_gen, amp_dels, tau_dels, 1);
     
     while 1
@@ -55,7 +50,7 @@ function [best_amps, best_taus, best_gens, best_chroms] = IKslow_AGA(nv, y, n0, 
         bchrom = new_gen(bf_idx,:);
         
         % stopping tolerance
-        if (bamp <= amp_tol) && (btau <= tau_tol)
+        if (bamp <= tol(1)) && (btau <= tol(2))
             fprintf('Termination: %f|Amp: %f|Tau: %f \n', bf, bamp, btau);
             disp(bchrom)
 
@@ -78,7 +73,6 @@ function [best_amps, best_taus, best_gens, best_chroms] = IKslow_AGA(nv, y, n0, 
             best_taus = [best_taus, btau];
             best_gens = [best_gens, cnt];
             best_chroms = [best_chroms; bchrom];
-            % damp_factor = (bf-min_tol)/(max_tol-min_tol)*0.5 + 0.5;
             % fprintf('Damping factor %f \n', damp_factor)
         end 
         
@@ -163,9 +157,11 @@ function [fits, amp_dels, tau_dels] = eval_fn(chrom, y)
             else
                 amp_dels(i) = abs(peak - y(1));
 
-                [~, tau_idx] = min(abs(peak*exp(-1) - trc(peak_idx:end)));
-                tau_dels(i) = abs(t(tau_idx)-y(2));
-                
+                trc_rd = trc(peak_idx:end);
+                tt_rd = t(peak_idx:end);
+                [~, tau_idx] = min(abs(peak*exp(-1) - trc_rd));
+                tau_dels(i) = abs(tt_rd(tau_idx)-y(2));
+
                 fits(i) = amp_dels(i) + tau_dels(i);
             end
         catch

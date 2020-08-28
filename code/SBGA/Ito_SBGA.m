@@ -1,6 +1,6 @@
-function [best_amps, best_taus, best_gens, best_chroms] = Ito_AGA(nv, y, N0, N1, N2)
+function [best_amps, best_taus, best_gens, best_chroms] = Ito_SBGA(y, tol, N0, N1, N2)
     global num_var;
-    num_var = nv;
+    num_var = 6;
 
     best_fits = [];
     best_amps = [];
@@ -42,7 +42,7 @@ function [best_amps, best_taus, best_gens, best_chroms] = Ito_AGA(nv, y, N0, N1,
         bchrom = new_gen(bf_idx,:);
         
         % stopping tolerance
-        if (bamp <= 0.1) && (btau <= 0.1)
+        if (bamp <= tol(1)) && (btau <= tol(2))
             fprintf('Termination: %f|Amp: %f|Tau: %f \n', bf, bamp, btau);
             disp(bchrom)
 
@@ -131,9 +131,11 @@ function [fits, amp_dels, tau_dels] = eval_fn(chrom, y, N0)
                 fits(i) = amp_dels(i) + tau_dels(i);
             else
                 amp_dels(i) = abs(peak - y(1));
-
-                [~, tau_idx] = min(abs(peak*exp(-1) - trc(peak_idx:end)));
-                tau_dels(i) = abs(t(tau_idx)-y(2));
+                
+                trc_rd = trc(peak_idx:end);
+                tt_rd = t(peak_idx:end);
+                [~, tau_idx] = min(abs(peak*exp(-1) - trc_rd));
+                tau_dels(i) = abs(tt_rd(tau_idx)-y(2));
                 
                 fits(i) = amp_dels(i) + tau_dels(i);
             end
