@@ -16,8 +16,10 @@ function [best_amps, best_taus, best_gens, best_chroms] = IKslow_SBGA(y, tol, n0
     best_chroms = [];
 
     % X0 = [22.5, 7.7, 45.2, 5.7, 2.058, 1200.0, 45.2, 5.7, 0.16]
-    low = [-50.0, 2.0, -20.0, 2.0, 1000.0, 0.05];  % 35000
-    high = [70.0, 14.0, 80.0, 24.0, 500000.0, 0.3];
+    % low = [-50.0, 2.0, -20.0, 2.0, 1000.0, 0.05];  % 35000
+    % high = [70.0, 14.0, 80.0, 24.0, 500000.0, 0.3];
+    low = [-60.0, 2.0, -20.0, 2.0, 200.0, 0.01];  % 35000
+    high = [80.0, 14.0, 80.0, 24.0, 50000.0, 0.31];
     init_gen = init_pop(low, high);
     
     cnt = 1;
@@ -37,7 +39,7 @@ function [best_amps, best_taus, best_gens, best_chroms] = IKslow_SBGA(y, tol, n0
     best_gens = [best_gens, 1];
     best_chroms = [best_chroms; bchrom];
     
-    new_gen = evolve(init_gen, amp_dels, tau_dels, 1);
+    new_gen = evolve(init_gen, amp_dels, tau_dels);
     
     while 1
         tic
@@ -73,15 +75,14 @@ function [best_amps, best_taus, best_gens, best_chroms] = IKslow_SBGA(y, tol, n0
             best_taus = [best_taus, btau];
             best_gens = [best_gens, cnt];
             best_chroms = [best_chroms; bchrom];
-            % fprintf('Damping factor %f \n', damp_factor)
         end 
         
-        new_gen = evolve(new_gen, amp_dels, tau_dels, 1);
+        new_gen = evolve(new_gen, amp_dels, tau_dels);
         toc
     end
 end
 
-function new_gen = evolve(chrom, amp_dels, tau_dels, damp_factor)
+function new_gen = evolve(chrom, amp_dels, tau_dels)
     global num_var;
     global N0;
     global N1;
@@ -95,19 +96,13 @@ function new_gen = evolve(chrom, amp_dels, tau_dels, damp_factor)
     
     [bfits, super_idx] = mink(fits, N1);
     elites = chrom(super_idx, :);
-    sigs = damp_factor * std(elites);
+    sigs = std(elites);
 
     mean_elite = mean(elites, 1);
     elites(end,:) = mean_elite;
 
-    disp([bamp, btau])
-    disp(bfits)
-    disp(sigs)
-    disp(elites)
-
     sig_ctl = [sig_ctl; sigs];
     pooled_sigs = mean(sig_ctl,1);
-    disp(pooled_sigs)
 
     % breeding
     cnt = 1;
@@ -159,6 +154,8 @@ function [fits, amp_dels, tau_dels] = eval_fn(chrom, y)
 
                 trc_rd = trc(peak_idx:end);
                 tt_rd = t(peak_idx:end);
+                tt_rd = tt_rd - tt_rd(1);
+
                 [~, tau_idx] = min(abs(peak*exp(-1) - trc_rd));
                 tau_dels(i) = abs(tt_rd(tau_idx)-y(2));
 

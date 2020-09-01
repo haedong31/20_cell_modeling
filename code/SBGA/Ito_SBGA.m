@@ -1,7 +1,8 @@
 function [best_amps, best_taus, best_gens, best_chroms] = Ito_SBGA(y, tol, N0, N1, N2)
     global num_var;
+    global sig_ctl;
     num_var = 6;
-
+    sig_ctl = [];
     best_fits = [];
     best_amps = [];
     best_taus = [];
@@ -84,19 +85,26 @@ end
 
 function new_gen = evolve(chrom, fits, N0, N1, N2)
     global num_var;
-
-    new_gen = zeros(N0, num_var);
+    global sig_ctl;
+    
     [~, super_idx] = mink(fits, N1);
     elites = chrom(super_idx, :);
-    new_gen(1:N1,:) = elites;
+    
+    sigs = std(elites);
+    sig_ctl = [sig_ctl; sigs];
+    pooled_sigs = mean(sig_ctl,1);
 
+    mean_elite = mean(elites, 1);
+    elites(end,:) = mean_elite;
+    
     % breeding
     cnt = 1;
-    sigs = std(elites);
+    new_gen = zeros(N0, num_var);
+    new_gen(1:N1,:) = elites;
     for i=1:N1
         elite = elites(i,:);
         for j=1:N2
-            offspring = elite + normrnd(0,sigs);
+            offspring = elite + normrnd(0,pooled_sigs);
             new_gen((N1+cnt),:) = offspring;
             cnt = cnt + 1;
         end
@@ -134,6 +142,8 @@ function [fits, amp_dels, tau_dels] = eval_fn(chrom, y, N0)
                 
                 trc_rd = trc(peak_idx:end);
                 tt_rd = t(peak_idx:end);
+                tt_rd = tt_rd - tt_rd(1);
+                
                 [~, tau_idx] = min(abs(peak*exp(-1) - trc_rd));
                 tau_dels(i) = abs(tt_rd(tau_idx)-y(2));
                 
